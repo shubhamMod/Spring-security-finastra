@@ -11,6 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -74,6 +75,54 @@ public class EmployeeService {
         }
         return null;
     }
+
+
+    // Checking present or not
+    public Employee setMod(String userId) {
+        return employeeRepo.findById(userId).filter(emp -> Boolean.FALSE.equals(emp.getDelFlg()))
+                .orElse(null);
+    }
+
+    // Update data
+    public Employee updateEmployee(Employee updatedDetails) {
+        updatedDetails.setModifiedAt(LocalDateTime.now());
+        return employeeRepo.save(updatedDetails);
+    }
+
+
+
+
+    // Deleting
+    public boolean setDel(String userId) {
+        Employee orElse = employeeRepo.findById(userId).filter(emp -> Boolean.FALSE.equals(emp.getDelFlg()))
+                .orElse(null);
+        if (orElse==null) {
+            return false;
+        }
+        Employee emp = employeeRepo.findById(userId).get();
+        emp.setModifiedAt(LocalDateTime.now());
+        emp.setDelFlg(true);
+        employeeRepo.save(emp);
+        return true;
+    }
+
+
+    // All Data
+    public List<Employee> all() {
+        return employeeRepo.findAll();
+    }
+
+
+    // Delete Employee
+    public List<Employee> blockEmployee() {
+        return employeeRepo.findDeletedEmployees();
+    }
+
+    // Active Employee
+    public List<Employee> activeEmployee() {
+        return employeeRepo.findActiveEmployees();
+    }
+
 
 
 }
