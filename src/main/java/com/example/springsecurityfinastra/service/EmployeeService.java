@@ -47,6 +47,7 @@ public class EmployeeService {
         String userId = empIdPart + namePart;
         employee.setPassword(bCryptPasswordEncoder.encode(employee.getPassword()));
         employee.setUserId(userId);
+        employee.setRole(employee.getRole().toUpperCase());
         employee.setCreatedAt(now);
         employee.setModifiedAt(now);
         employee.setDelFlg(false);

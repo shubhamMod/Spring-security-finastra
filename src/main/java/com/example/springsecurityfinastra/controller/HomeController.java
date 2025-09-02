@@ -15,7 +15,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/employees")
-@CrossOrigin("*")
 public class HomeController {
 
     EmployeeService  employeeService;

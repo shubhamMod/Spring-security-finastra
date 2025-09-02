@@ -19,6 +19,7 @@ public class Employee {
     @Column(nullable = false,unique = true)
     private Long phone;
     private String password;
+    private String role;
     private Boolean delFlg;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
