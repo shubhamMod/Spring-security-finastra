@@ -85,11 +85,12 @@ public class HomeController {
             response.put("Message", "User found with userId: " + userId);
             response.put("employee", employee);
             return ResponseEntity.ok(response);
-        } catch(Exception e)
+        } catch(Exception e) {
             response.put("Status", "BAD_REQUEST");
             response.put("Message", " User not found with userId: " + e.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
+
 
     }
 
