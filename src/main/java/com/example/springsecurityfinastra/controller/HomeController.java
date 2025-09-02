@@ -41,16 +41,17 @@ public class HomeController {
 
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> getLoginData(@RequestBody Employee employee) {
-        Employee login = employeeService.getLogin(employee);
+
         Map<String, Object> response = new HashMap<>();
-        if (login != null) {
+      try{
+          Employee login = employeeService.getLogin(employee);
             response.put("Status", "OK");
             response.put("Message", "Login Successful");
             response.put("Employee", login);
             return ResponseEntity.ok(response);
-        } else {
+        } catch(Exception e) {
             response.put("Status", "FAIL");
-            response.put("Message", "User not found with userId: " + employee.getUserId());
+            response.put("Message", "User not found with userId: "+employee.getUserId() );
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
     }
@@ -76,25 +77,25 @@ public class HomeController {
 
     @GetMapping("/check/{userId}")
     public ResponseEntity<Map<String, Object>> setUpdate(@PathVariable String userId) {
-        Employee employee = employeeService.setMod(userId);
-        Map<String, Object> response = new HashMap<>();
 
-        if (employee != null) {
+        Map<String, Object> response = new HashMap<>();
+        try{
+            Employee employee = employeeService.setMod(userId);
             response.put("Status", "OK");
             response.put("Message", "User found with userId: " + userId);
             response.put("employee", employee);
             return ResponseEntity.ok(response);
-        } else {
+        } catch(Exception e)
             response.put("Status", "BAD_REQUEST");
-            response.put("Message", " User not found with userId: " + userId);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            response.put("Message", " User not found with userId: " + e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
 
     }
 
     @DeleteMapping("/delete/{userId}")
     public ResponseEntity<String> getDelete(@PathVariable String userId) {
-        Boolean setDel = employeeService.setDel(userId);
+        boolean setDel = employeeService.setDel(userId);
         if(setDel) {
             return ResponseEntity.ok(" Employee deleted successfully");
         }
