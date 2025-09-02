@@ -2,8 +2,11 @@ package com.example.springsecurityfinastra.controller;
 
 import com.example.springsecurityfinastra.entity.Employee;
 import com.example.springsecurityfinastra.service.EmployeeService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -12,6 +15,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/employees")
+@CrossOrigin("*")
 public class HomeController {
 
     EmployeeService  employeeService;
@@ -40,7 +44,7 @@ public class HomeController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String, Object>> getLoginData(@RequestBody Employee employee) {
+    public ResponseEntity<Map<String, Object>> getLoginData(@RequestBody Employee employee, HttpServletRequest  request) {
 
         Map<String, Object> response = new HashMap<>();
       try{
@@ -48,7 +52,10 @@ public class HomeController {
             response.put("Status", "OK");
             response.put("Message", "Login Successful");
             response.put("Employee", login);
-            return ResponseEntity.ok(response);
+          HttpSession session = request.getSession(true);
+          session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
+
+          return ResponseEntity.ok(response);
         } catch(Exception e) {
             response.put("Status", "FAIL");
             response.put("Message", "User not found with userId: "+employee.getUserId() );
@@ -62,6 +69,11 @@ public class HomeController {
     @GetMapping("/fetching")
     public List<Employee> allData() {
         return employeeService.all();
+    }
+
+    @GetMapping("/fetchingSorted/{field}")
+    public List<Employee> allData(@PathVariable String field) {
+        return employeeService.allSorted(field);
     }
 
     @GetMapping("/block")
@@ -85,11 +97,12 @@ public class HomeController {
             response.put("Message", "User found with userId: " + userId);
             response.put("employee", employee);
             return ResponseEntity.ok(response);
-        } catch(Exception e)
+        } catch(Exception e) {
             response.put("Status", "BAD_REQUEST");
             response.put("Message", " User not found with userId: " + e.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
+
 
     }
 

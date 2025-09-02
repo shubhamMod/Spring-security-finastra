@@ -15,9 +15,9 @@ public interface EmployeeRepo extends JpaRepository<Employee,String> {
 
     Optional<Employee> findByPhone(Long phone);
 
-    @Query(value = "SELECT * FROM shubham_emp WHERE del_flg=true", nativeQuery = true)
+    @Query(value = "SELECT * FROM mod_data WHERE del_flg=true", nativeQuery = true)
     List<Employee> findDeletedEmployees();
 
-    @Query(value = "SELECT * FROM shubham_emp WHERE del_flg=false", nativeQuery = true)
+    @Query(value = "SELECT * FROM mod_data WHERE del_flg=false", nativeQuery = true)
     List<Employee> findActiveEmployees();
 }

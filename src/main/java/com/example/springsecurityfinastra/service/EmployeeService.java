@@ -2,6 +2,7 @@ package com.example.springsecurityfinastra.service;
 
 import com.example.springsecurityfinastra.entity.Employee;
 import com.example.springsecurityfinastra.repo.EmployeeRepo;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -59,22 +60,27 @@ public class EmployeeService {
         if ((identifier == null || identifier.trim().isEmpty()) && employee.getPhone() == null) {
             throw new BadCredentialsException("UserId or Phone must be provided");
         }
-        String username = (identifier != null) ? identifier : String.valueOf(employee.getPhone());
+        String username = (identifier != null && !identifier.trim().isEmpty())
+                ? identifier.trim()
+                : String.valueOf(employee.getPhone());
         String password = employee.getPassword();
+
         Authentication authenticate = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(username, password)
         );
         if (authenticate.isAuthenticated()) {
             Optional<Employee> customer;
-            if (identifier != null) {
+            if (identifier != null && !identifier.trim().isEmpty()) {
                 customer = employeeRepo.findByUserIdIgnoreCase(identifier);
             } else {
                 customer = employeeRepo.findByPhone(employee.getPhone());
             }
             return customer.orElseThrow(() -> new BadCredentialsException("User not found"));
         }
+
         return null;
     }
+
 
 
     // Checking present or not
@@ -108,10 +114,14 @@ public class EmployeeService {
 
 
     // All Data
+
     public List<Employee> all() {
         return employeeRepo.findAll();
     }
 
+    public List<Employee> allSorted(String field) {
+        return employeeRepo.findAll(Sort.by(field).ascending());
+    }
 
     // Delete Employee
     public List<Employee> blockEmployee() {

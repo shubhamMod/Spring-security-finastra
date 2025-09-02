@@ -29,7 +29,7 @@ public class SecurityFilterConfig {
                 .httpBasic(Customizer.withDefaults())
                 .formLogin(Customizer.withDefaults())
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests.
-                        requestMatchers("/employees/register","/employees/login","/employees/fetching").permitAll()
+                        requestMatchers("/employees/register","/employees/login","/employees/**").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
