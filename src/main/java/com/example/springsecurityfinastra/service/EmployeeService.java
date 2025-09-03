@@ -129,12 +129,12 @@ public class EmployeeService {
 
     // Delete Employee
     public List<Employee> blockEmployee() {
-        return employeeRepo.findDeletedEmployees();
+        return employeeRepo.findByDelFlgTrue();
     }
 
     // Active Employee
     public List<Employee> activeEmployee() {
-        return employeeRepo.findActiveEmployees();
+        return employeeRepo.findByDelFlgFalse();
     }
 
 

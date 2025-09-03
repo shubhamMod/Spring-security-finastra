@@ -9,15 +9,18 @@ import java.util.Optional;
 
 public interface EmployeeRepo extends JpaRepository<Employee,String> {
     Employee findByEmployeeId(String employeeId);
+
     Optional<Employee> findByUserIdIgnoreCase(String userId);
 
     Employee findByEmailIdIgnoreCase(String emailId);
 
     Optional<Employee> findByPhone(Long phone);
 
-    @Query(value = "SELECT * FROM mod_data WHERE del_flg=true", nativeQuery = true)
-    List<Employee> findDeletedEmployees();
-
-    @Query(value = "SELECT * FROM mod_data WHERE del_flg=false", nativeQuery = true)
-    List<Employee> findActiveEmployees();
+//    @Query(value = "SELECT * FROM mod_data WHERE del_flg=true", nativeQuery = true)
+//    List<Employee> findDeletedEmployees();
+//
+//    @Query(value = "SELECT * FROM mod_data WHERE del_flg=false", nativeQuery = true)
+//    List<Employee> findActiveEmployees();
+List<Employee> findByDelFlgFalse();
+    List<Employee> findByDelFlgTrue();
 }

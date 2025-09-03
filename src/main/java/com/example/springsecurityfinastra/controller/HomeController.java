@@ -58,6 +58,7 @@ public class HomeController {
         } catch(Exception e) {
             response.put("Status", "FAIL");
             response.put("Message", "User not found with userId: "+employee.getUserId() );
+//            response.put("Error", e.getMessage() );
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
