@@ -1,5 +1,6 @@
 package com.example.springsecurityfinastra.security;
 
+import com.example.springsecurityfinastra.Jwt.JwtFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,14 +15,19 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
 @EnableWebSecurity
 @Configuration
-@EnableMethodSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityFilterConfig {
+
+    private final JwtFilter jwtFilter;
 
    private final CustomerUserDetailService customerUserDetailService;
 
-    public SecurityFilterConfig(CustomerUserDetailService customerUserDetailService) {
+    public SecurityFilterConfig(JwtFilter jwtFilter, CustomerUserDetailService customerUserDetailService) {
+        this.jwtFilter = jwtFilter;
         this.customerUserDetailService = customerUserDetailService;
     }
 
@@ -33,10 +39,11 @@ public class SecurityFilterConfig {
                 .httpBasic(Customizer.withDefaults())
                 .formLogin(Customizer.withDefaults())
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests.
-                        requestMatchers("/employees/register","/employees/login","/employees/**","/actuator/**").permitAll()
+                        requestMatchers("/employees/register","/employees/login","/actuator/**").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 

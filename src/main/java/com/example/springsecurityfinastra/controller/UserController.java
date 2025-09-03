@@ -9,9 +9,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/auth")
 public class UserController {
 
+
+
     @GetMapping("/home")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('ADMIN')")
     public String home(){
         return "Hello World";
     }
+
+//    @GetMapping("/home1")
+//    @PostAuthorize("returnObject.owner == authentication.name")
+//    public String home1(){
+//        return "Hello World";
+//    }
 }

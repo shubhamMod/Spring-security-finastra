@@ -1,9 +1,11 @@
 package com.example.springsecurityfinastra.controller;
 
+import com.example.springsecurityfinastra.Jwt.JwtUtil;
 import com.example.springsecurityfinastra.entity.Employee;
 import com.example.springsecurityfinastra.service.EmployeeService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,6 +19,10 @@ import java.util.Map;
 @RestController
 @RequestMapping("/employees")
 public class HomeController {
+
+
+    @Autowired
+    JwtUtil jwtUtil;
 
     EmployeeService  employeeService;
     public HomeController(EmployeeService employeeService) {
@@ -53,6 +59,7 @@ public class HomeController {
               response.put("Status", "OK");
               response.put("Message", "Login Successful");
               response.put("Employee", login);
+              response.put("token", jwtUtil.generateToken(login.getUserId()));
               HttpSession session = request.getSession(true);
               session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
 
@@ -70,6 +77,10 @@ public class HomeController {
     @GetMapping("/fetching")
     public List<Employee> allData() {
         return employeeService.all();
+    }
+    @GetMapping("/tokenid/{token}")
+    public String allData1(@PathVariable String token) {
+        return jwtUtil.getUsername(token);
     }
 
     @GetMapping("/fetchingSorted/{field}")
