@@ -33,7 +33,7 @@ public class SecurityFilterConfig {
                 .httpBasic(Customizer.withDefaults())
                 .formLogin(Customizer.withDefaults())
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests.
-                        requestMatchers("/employees/register","/employees/login","/employees/**","/actuator").permitAll()
+                        requestMatchers("/employees/register","/employees/login","/employees/**","/actuator/**").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

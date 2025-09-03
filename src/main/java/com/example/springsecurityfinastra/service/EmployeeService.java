@@ -88,10 +88,13 @@ public class EmployeeService {
 
 
     // Checking present or not
+    // Service method: Check if employee exists and is not marked as deleted
     public Employee setMod(String userId) {
-        return employeeRepo.findById(userId).filter(emp -> Boolean.FALSE.equals(emp.getDelFlg()))
+        return employeeRepo.findById(userId)
+                .filter(emp -> Boolean.FALSE.equals(emp.getDelFlg()))
                 .orElse(null);
     }
+
 
     // Update data
     public Employee updateEmployee(Employee updatedDetails) {

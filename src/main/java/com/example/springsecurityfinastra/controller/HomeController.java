@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -46,21 +47,21 @@ public class HomeController {
     public ResponseEntity<Map<String, Object>> getLoginData(@RequestBody Employee employee, HttpServletRequest  request) {
 
         Map<String, Object> response = new HashMap<>();
-      try{
-          Employee login = employeeService.getLogin(employee);
-            response.put("Status", "OK");
-            response.put("Message", "Login Successful");
-            response.put("Employee", login);
-          HttpSession session = request.getSession(true);
-          session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
 
-          return ResponseEntity.ok(response);
-        } catch(Exception e) {
+          Employee login = employeeService.getLogin(employee);
+          if(login!=null) {
+              response.put("Status", "OK");
+              response.put("Message", "Login Successful");
+              response.put("Employee", login);
+              HttpSession session = request.getSession(true);
+              session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
+
+              return ResponseEntity.ok(response);
+          }
             response.put("Status", "FAIL");
             response.put("Message", "User not found with userId: "+employee.getUserId() );
-//            response.put("Error", e.getMessage() );
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-        }
+
     }
 
 
@@ -85,26 +86,45 @@ public class HomeController {
         return employeeService.activeEmployee();
     }
 
-
-
     @GetMapping("/check/{userId}")
     public ResponseEntity<Map<String, Object>> setUpdate(@PathVariable String userId) {
-
         Map<String, Object> response = new HashMap<>();
-        try{
-            Employee employee = employeeService.setMod(userId);
-            response.put("Status", "OK");
-            response.put("Message", "User found with userId: " + userId);
+
+        Employee employee = employeeService.setMod(userId);
+
+        if (employee != null) {
+            response.put("status", "OK");
+            response.put("message", "User found with userId: " + userId);
             response.put("employee", employee);
             return ResponseEntity.ok(response);
-        } catch(Exception e) {
-            response.put("Status", "BAD_REQUEST");
-            response.put("Message", " User not found with userId: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        } else {
+            response.put("status", "NOT_FOUND");
+            response.put("message", "User not found or is marked as deleted for userId: " + userId);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
-
-
     }
+
+
+
+
+//    @GetMapping("/check/{userId}")
+//    public ResponseEntity<Map<String, Object>> setUpdate(@PathVariable String userId) {
+//
+//        Map<String, Object> response = new HashMap<>();
+//        try{
+//            Employee employee = employeeService.setMod(userId);
+//            response.put("Status", "OK");
+//            response.put("Message", "User found with userId: " + userId);
+//            response.put("employee", employee);
+//            return ResponseEntity.ok(response);
+//        } catch(Exception e) {
+//            response.put("Status", "BAD_REQUEST");
+//            response.put("Message", " User not found with userId: " + e.getMessage());
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+//        }
+//
+//
+//    }
 
     @DeleteMapping("/delete/{userId}")
     public ResponseEntity<String> getDelete(@PathVariable String userId) {
